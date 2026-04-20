@@ -1,0 +1,19 @@
+name: zwanski
+platform: private
+in_scope:
+  - "zwanski.bio"
+  - "*.zwanski.bio"
+rate_limit_rps: 5
+allowed_tools:
+  - subfinder
+  - assetfinder
+  - httpx
+  - httpx_list
+  - katana
+  - nuclei
+  - naabu
+  - waybackurls
+  - favicon
+  - gitleaks
+notes: |
+  Self-owned target. Full authorization.

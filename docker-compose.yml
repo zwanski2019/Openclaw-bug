@@ -1,0 +1,32 @@
+services:
+  openclaw:
+    build: .
+    container_name: openclaw
+    env_file: .env
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./scopes:/app/scopes
+      - ./nuclei-custom:/app/nuclei-custom  # drop your own templates here
+      - ./openclaw:/app/openclaw  # live reload in dev; remove in prod
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - openclaw-net
+
+  # Uncomment if you want Ollama in-cluster instead of host
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: openclaw-ollama
+  #   volumes:
+  #     - ./data/ollama:/root/.ollama
+  #   ports:
+  #     - "11434:11434"
+  #   networks:
+  #     - openclaw-net
+
+networks:
+  openclaw-net:
+    driver: bridge

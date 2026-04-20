@@ -1,0 +1,29 @@
+name: example-program
+platform: hackerone
+in_scope:
+  - "*.example.com"
+  - "api.example.net"
+out_of_scope:
+  - "blog.example.com"
+  - "*.corp.example.com"
+  - "status.example.com"
+rate_limit_rps: 5
+allowed_tools:
+  - subfinder
+  - assetfinder
+  - httpx
+  - httpx_list
+  - katana
+  - nuclei
+  - naabu
+  - waybackurls
+  - ffuf
+notes: |
+  HackerOne program. Example template — replace before real use.
+
+  Program-specific rules:
+    - No DoS / stress testing
+    - No brute force on login endpoints
+    - No social engineering
+    - Include @zwanski in all reports
+    - Mobile API v1 under scope, v2 out of scope per program policy

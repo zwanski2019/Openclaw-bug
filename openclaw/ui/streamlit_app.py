@@ -2,8 +2,13 @@
 from __future__ import annotations
 import json
 import os
+import sys
+from pathlib import Path
 import httpx
 import streamlit as st
+
+# Ensure project root is importable regardless of Streamlit launch cwd.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from openclaw.config import settings
 

@@ -45,8 +45,6 @@ COPY openclaw/ ./openclaw/
 COPY scopes/ ./scopes/
 RUN mkdir -p /app/data/runs /app/data/continuous
 
-VOLUME ["/app/data", "/app/scopes", "/app/nuclei-custom"]
-
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \

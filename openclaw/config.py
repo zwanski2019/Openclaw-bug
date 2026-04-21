@@ -28,6 +28,7 @@ class Settings(BaseSettings):
 
     # UI
     streamlit_server_port: int = 8501
+    backend_base_url: str = "http://localhost:8000"
 
     # Hunter identity
     hunter_handle: str = "zwanski"

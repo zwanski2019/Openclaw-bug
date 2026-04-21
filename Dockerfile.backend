@@ -1,0 +1,55 @@
+FROM golang:1.25-bookworm AS gotools
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpcap-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV GOPATH=/go \
+    GOBIN=/go/bin \
+    PATH=/go/bin:$PATH \
+    GOPROXY=https://proxy.golang.org,direct
+
+RUN go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+RUN go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+RUN go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+RUN go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
+RUN go install github.com/projectdiscovery/katana/cmd/katana@latest
+RUN go install github.com/ffuf/ffuf/v2@latest
+RUN go install github.com/tomnomnom/assetfinder@latest
+RUN go install github.com/tomnomnom/waybackurls@latest
+RUN go install github.com/zricethezav/gitleaks/v8@latest
+RUN /go/bin/nuclei -update-templates -silent || true
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH=/opt/venv/bin:/usr/local/bin:/usr/bin:/bin
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip python3-venv \
+    ca-certificates curl \
+    nmap dnsutils jq git \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=gotools /go/bin/ /usr/local/bin/
+COPY --from=gotools /root/nuclei-templates/ /root/nuclei-templates/
+
+RUN python3 -m venv /opt/venv
+WORKDIR /app
+COPY requirements.txt .
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+COPY openclaw/ ./openclaw/
+COPY scopes/ ./scopes/
+RUN mkdir -p /app/data/runs /app/data/continuous
+
+VOLUME ["/app/data", "/app/scopes", "/app/nuclei-custom"]
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD curl -fs http://localhost:8000/health || exit 1
+
+CMD ["uvicorn", "openclaw.backend.api:app", "--host", "0.0.0.0", "--port", "8000"]

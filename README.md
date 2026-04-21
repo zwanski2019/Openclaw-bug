@@ -69,7 +69,25 @@ docker compose up --build
 # → http://localhost:8501
 ```
 
+This now starts two services:
+
+- Frontend (Streamlit): `http://localhost:8501`
+- Backend API (FastAPI): `http://localhost:8000`
+
 First run initializes SQLite at `./data/openclaw.db` and writes recon output to `./data/runs/<run_id>/`.
+
+---
+
+## Split deployment (Railway backend + Streamlit frontend)
+
+Deploy backend to Railway using `Dockerfile.backend`:
+
+- Start command: `uvicorn openclaw.backend.api:app --host 0.0.0.0 --port $PORT`
+- Health check path: `/health`
+
+Deploy frontend separately using `Dockerfile.frontend` and set:
+
+- `BACKEND_BASE_URL=https://<your-railway-backend-domain>`
 
 ---
 

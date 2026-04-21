@@ -1,10 +1,12 @@
 services:
-  openclaw:
-    build: .
-    container_name: openclaw
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: openclaw-backend
     env_file: .env
     ports:
-      - "8501:8501"
+      - "8000:8000"
     volumes:
       - ./data:/app/data
       - ./scopes:/app/scopes
@@ -16,16 +18,24 @@ services:
     networks:
       - openclaw-net
 
-  # Uncomment if you want Ollama in-cluster instead of host
-  # ollama:
-  #   image: ollama/ollama:latest
-  #   container_name: openclaw-ollama
-  #   volumes:
-  #     - ./data/ollama:/root/.ollama
-  #   ports:
-  #     - "11434:11434"
-  #   networks:
-  #     - openclaw-net
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: openclaw-frontend
+    env_file: .env
+    environment:
+      - BACKEND_BASE_URL=http://backend:8000
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./openclaw:/app/openclaw
+      - ./scopes:/app/scopes
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - openclaw-net
 
 networks:
   openclaw-net:

@@ -58,9 +58,6 @@ COPY scopes/ ./scopes/
 
 RUN mkdir -p /app/data/runs /app/data/continuous
 
-# Optional: mount custom nuclei templates at /app/nuclei-custom
-VOLUME ["/app/data", "/app/scopes", "/app/nuclei-custom"]
-
 EXPOSE 8501
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \

@@ -53,6 +53,7 @@ class HttpxList(Tool):
     name = "httpx_list"
     binary = "httpx"
     description = "httpx probe against a list file of subdomains"
+    skip_scope = True  # target is a file path, not a hostname
 
     def build_args(self, target: str, **kwargs) -> list[str]:
         # target is the path to a file of hosts
@@ -71,7 +72,8 @@ class Nuclei(Tool):
     default_timeout = 1800  # 30 min
 
     def build_args(self, target: str, **kwargs) -> list[str]:
-        args = ["-u", target, "-silent", "-json-export", "-"]
+        # -j writes JSONL to stdout; -json-export requires a file path and won't work with "-"
+        args = ["-u", target, "-silent", "-j"]
         severity = kwargs.get("severity", "medium,high,critical")
         args += ["-severity", severity]
         if tags := kwargs.get("tags"):

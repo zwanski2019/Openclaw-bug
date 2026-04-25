@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://host.docker.internal:11434"
     ollama_model: str = "qwen2.5-coder:7b"
 
-    # DB
-    db_path: str = "/app/data/openclaw.db"
+    # DB — defaults to project-relative path so it works inside Docker (/app/...) and locally
+    db_path: str = str(Path(__file__).parents[1] / "data" / "openclaw.db")
     supabase_url: str = ""
     supabase_key: str = ""
 

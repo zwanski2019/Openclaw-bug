@@ -25,7 +25,7 @@ def get_conn() -> Iterator[sqlite3.Connection]:
     db_path = Path(settings.db_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
     first_run = not db_path.exists()
-    conn = sqlite3.connect(db_path, isolation_level=None)  # autocommit off for txns
+    conn = sqlite3.connect(db_path, isolation_level=None)  # isolation_level=None → autocommit ON
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA journal_mode = WAL")
